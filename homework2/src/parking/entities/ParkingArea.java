@@ -27,7 +27,7 @@ public class ParkingArea {
      */
     private int freeParkingLots;
     /**
-     * Список попыток, когда машина не смогла попасть на парковку.
+     * Список попыток, когда машина пыталась совершить въезд на парковку.
      */
     private EntryAttempt[] entryAttempts = new EntryAttempt[1];
     /**
