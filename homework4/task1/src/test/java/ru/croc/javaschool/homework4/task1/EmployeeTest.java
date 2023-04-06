@@ -3,6 +3,7 @@ package ru.croc.javaschool.homework4.task1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.croc.javaschool.homework4.task1.Employee;
 
 /**
  * Тест для {@link Employee}.
@@ -31,7 +32,7 @@ public class EmployeeTest {
      * идентификаторы.
      */
     @Test
-    public void testCompareTo() {
+    public void compareToTest() {
         int result1 = emp1.compareTo(emp2);
         int result2 = emp2.compareTo(emp3);
         int result3 = emp4.compareTo(emp1);

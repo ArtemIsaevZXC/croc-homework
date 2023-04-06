@@ -3,6 +3,8 @@ package ru.croc.javaschool.homework4.task1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.croc.javaschool.homework4.task1.Department;
+import ru.croc.javaschool.homework4.task1.Employee;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -126,7 +128,7 @@ public class DepartmentTest {
      * Тест сортировки руководителей по подчиненным и имени.
      */
     @Test
-    public void testGetSortedMap() {
+    public void getSortedMapTest() {
         Map<Employee, Integer> expectedMap = new LinkedHashMap<>();
         expectedMap.put(john, 5);
         expectedMap.put(saul, 4);
@@ -139,7 +141,7 @@ public class DepartmentTest {
      * Тест разделения сотрудников по организациям.
      */
     @Test
-    public void testSplitEmployees() {
+    public void splitEmployeesTest() {
         List<List<Employee>> testOrganizationsList = departmentForSplit.getOrganizationsList();
         List<Employee> org1 = new ArrayList<>();
         org1.add(chief1);
