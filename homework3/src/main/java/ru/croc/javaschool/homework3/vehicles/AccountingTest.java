@@ -12,6 +12,9 @@ import java.time.LocalDate;
  * @author Artem Isaev
  */
 public class AccountingTest {
+    /**
+     * Точка входа в программу.
+     */
     public static void main(String[] args) {
         // Создаю свои транспортные средства.
         PassengerCar car1 = new PassengerCar(1);
