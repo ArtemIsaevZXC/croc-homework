@@ -3,8 +3,6 @@ package ru.croc.javaschool.homework4.task1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.croc.javaschool.homework4.task1.Department;
-import ru.croc.javaschool.homework4.task1.Employee;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -75,8 +73,6 @@ public class DepartmentTest {
      */
     @BeforeEach
     public void init() {
-        employeesForSort = new ArrayList<>();
-
         Employee emp2 = new Employee(2, "Mike");
         Employee emp4 = new Employee(4, "Colt");
         Employee emp5 = new Employee(5, "Solar");
@@ -95,31 +91,18 @@ public class DepartmentTest {
         emp10.setManager(aac);
         emp11.setManager(aac);
 
-        employeesForSort.add(aab);
-        employeesForSort.add(emp2);
-        employeesForSort.add(emp9);
-        employeesForSort.add(john);
-        employeesForSort.add(emp10);
-        employeesForSort.add(saul);
-        employeesForSort.add(aac);
-        employeesForSort.add(emp11);
-        employeesForSort.add(emp4);
-        employeesForSort.add(emp5);
-        employeesForSort.add(emp6);
+        employeesForSort = new ArrayList<>(List.of(
+                aab, emp2, emp9, john, emp10, saul, aac, emp11, emp4, emp5, emp6));
+
 
         departmentForSort = new Department(employeesForSort);
         //--------------------------------------------------
 
-        employeesForSplit = new ArrayList<>();
-
         worker1.setManager(chief1);
         worker2.setManager(chief2);
 
-        employeesForSplit.add(chief1);
-        employeesForSplit.add(chief2);
-        employeesForSplit.add(chief3);
-        employeesForSplit.add(worker1);
-        employeesForSplit.add(worker2);
+        employeesForSplit = new ArrayList<>(List.of(
+                chief1, chief2, chief3, worker1, worker2));
 
         departmentForSplit = new Department(employeesForSplit);
     }
