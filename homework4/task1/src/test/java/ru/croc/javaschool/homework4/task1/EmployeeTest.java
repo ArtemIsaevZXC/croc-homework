@@ -3,7 +3,6 @@ package ru.croc.javaschool.homework4.task1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.croc.javaschool.homework4.task1.Employee;
 
 /**
  * Тест для {@link Employee}.
