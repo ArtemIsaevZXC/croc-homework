@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects>
+    <project>
+        <title>Проект 1</title>
+        <description>Описание 1</description>
+        <managers>
+            <manager name="Человек 1">
+                <specialists>
+                    <specialist name="Человек 3"/>
+                </specialists>
+            </manager>
+        </managers>
+    </project>
+</projects>
