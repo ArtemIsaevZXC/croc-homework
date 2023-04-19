@@ -69,7 +69,7 @@ public class ProjectsDataConverterTest {
         People people = new People(personList);
         final String expected = xmlConverter.toXml(people);
 
-        Path path = Paths.get("src/test/resources", "src.xml");
+        Path path = Paths.get("src/test/resources", "srcTest.xml");
         String actual = ProjectsDataConverter.convert(Files.readString(path));
 
         Assertions.assertEquals(expected, actual);
