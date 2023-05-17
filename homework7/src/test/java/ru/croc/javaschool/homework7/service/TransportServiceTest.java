@@ -4,15 +4,17 @@ import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.croc.javaschool.homework7.model.Bus;
+import ru.croc.javaschool.homework7.model.Transport;
 import ru.croc.javaschool.homework7.model.Trolleybus;
 import ru.croc.javaschool.homework7.repository.TransportRepository;
 import ru.croc.javaschool.homework7.repository.implementation.DerbyTransportRepository;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 
@@ -59,35 +61,90 @@ public class TransportServiceTest {
     /**
      * Тест {@link TransportService#addTransportToDB(Path, Path)}, который проверяет,
      * что транспорт добавлен в базу данных.
-     *
-     * @throws IOException если произошла ошибка ввода-вывода
      */
     @Test
-    public void addTransportToDBTest() throws IOException {
+    public void addTransportToDBTest() {
         Path busXML = Paths.get("src/test/resources/buses.xml");
         Path trolleybusXML = Paths.get("src/test/resources/trolleys.xml");
-        transportService.addTransportToDB(busXML, trolleybusXML);
-        Assertions.assertFalse(transportRepository.findAll().isEmpty());
+        List<Transport> result = transportService.addTransportToDB(busXML, trolleybusXML);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(result, transportService.findAllTransport());
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            transportService.addTransportToDB(busXML, trolleybusXML);
+        });
     }
 
     /**
-     * Тест {@link TransportService#findAll(String)}, который проверяет, что возвращаемый список транспорта не пустой.
+     * Тест {@link TransportService#findAllTransport()}, который возвращает список всего транспорта.
      */
     @Test
-    public void findAllTest() {
-        Bus bus = new Bus(10, 1050.0022, 1051.0022, 50, LocalDateTime.now());
-        Trolleybus trolleybus = new Trolleybus(14, 1024, 1024, 60, LocalDateTime.now());
+    public void findAllTransportTest() {
+        Bus bus1 = new Bus(1, 60.1111, 120.1111, 50, LocalDateTime.now());
+        Bus bus2 = new Bus(2, 61.1111, 121.1111, 60, LocalDateTime.now());
+        Trolleybus trolleybus1 = new Trolleybus(3, 62.1111, 122.1111, 70, LocalDateTime.now());
+        Trolleybus trolleybus2 = new Trolleybus(4, 63.1111, 123.1111, 80, LocalDateTime.now());
 
-        transportRepository.create(bus);
-        transportRepository.create(trolleybus);
+        transportRepository.create(bus1);
+        transportRepository.create(bus2);
+        transportRepository.create(trolleybus1);
+        transportRepository.create(trolleybus2);
 
-        Assertions.assertTrue(transportService.findAll("TRANSPORT"));
+        List<Transport> allTransport = transportService.findAllTransport();
+        Assertions.assertEquals(List.of(bus1, bus2, trolleybus1, trolleybus2), allTransport);
 
-        Assertions.assertTrue(transportService.findAll("BUS"));
+        transportService.clearTable();
+        allTransport = transportService.findAllTransport();
+        Assertions.assertTrue(allTransport.isEmpty());
+    }
 
-        Assertions.assertTrue(transportService.findAll("TROLLEYBUS"));
+    /**
+     * Тест {@link TransportService#findAllBuses()}, который возвращает список всех автобусов.
+     */
+    @Test
+    public void findAllBusesTest() {
+        Bus bus1 = new Bus(1, 60.1111, 120.1111, 50, LocalDateTime.now());
+        Bus bus2 = new Bus(2, 61.1111, 121.1111, 60, LocalDateTime.now());
+        Trolleybus trolleybus1 = new Trolleybus(3, 62.1111, 122.1111, 70, LocalDateTime.now());
+        Trolleybus trolleybus2 = new Trolleybus(4, 63.1111, 123.1111, 80, LocalDateTime.now());
 
-        Assertions.assertFalse(transportService.findAll("TRAIN"));
+        transportRepository.create(bus1);
+        transportRepository.create(bus2);
+        transportRepository.create(trolleybus1);
+        transportRepository.create(trolleybus2);
+
+        List<Transport> allBuses = transportService.findAllBuses();
+        Assertions.assertEquals(List.of(bus1, bus2), allBuses);
+        Assertions.assertNotEquals(List.of(bus1, bus2, trolleybus1), allBuses);
+
+        transportService.clearTable();
+        allBuses = transportService.findAllBuses();
+        Assertions.assertTrue(allBuses.isEmpty());
+    }
+
+    /**
+     * Тест {@link TransportService#findAllTrolleys()}, который возвращает список всех троллейбусов.
+     */
+    @Test
+    public void findAllTrolleysTest() {
+        Bus bus1 = new Bus(1, 60.1111, 120.1111, 50, LocalDateTime.now());
+        Bus bus2 = new Bus(2, 61.1111, 121.1111, 60, LocalDateTime.now());
+        Trolleybus trolleybus1 = new Trolleybus(3, 62.1111, 122.1111, 70, LocalDateTime.now());
+        Trolleybus trolleybus2 = new Trolleybus(4, 63.1111, 123.1111, 80, LocalDateTime.now());
+
+        transportRepository.create(bus1);
+        transportRepository.create(bus2);
+        transportRepository.create(trolleybus1);
+        transportRepository.create(trolleybus2);
+
+        List<Transport> allTrolleys = transportService.findAllTrolleys();
+        Assertions.assertEquals(List.of(trolleybus1, trolleybus2), allTrolleys);
+        Assertions.assertNotEquals(List.of(trolleybus1, trolleybus2, bus1), allTrolleys);
+
+        transportService.clearTable();
+        allTrolleys = transportService.findAllTrolleys();
+        Assertions.assertTrue(allTrolleys.isEmpty());
     }
 
     /**
@@ -96,48 +153,26 @@ public class TransportServiceTest {
      */
     @Test
     public void findByTimeTest() {
-        final int ROUTE_NUMBER_1 = 50;
-        final double LATITUDE_1 = 160.1111;
-        final double LONGITUDE_1 = 120.1111;
-        final int SPEED_1 = 50;
-        var bus1 = new Bus(
-                ROUTE_NUMBER_1,
-                LATITUDE_1,
-                LONGITUDE_1,
-                SPEED_1,
+        Bus bus1 = new Bus(50, 160.1111, 120.1111, 50,
                 LocalDateTime.of(2023, 5, 13, 15, 45, 00)
         );
         transportRepository.create(bus1);
 
-        final int ROUTE_NUMBER_2 = 51;
-        final double LATITUDE_2 = 61.1111;
-        final double LONGITUDE_2 = 121.1111;
-        final int SPEED_2 = 51;
-        var bus2 = new Bus(
-                ROUTE_NUMBER_2,
-                LATITUDE_2,
-                LONGITUDE_2,
-                SPEED_2,
+        Bus bus2 = new Bus(51, 61.1111, 121.1111, 51,
                 LocalDateTime.of(2023, 5, 14, 10, 30, 00)
         );
         transportRepository.create(bus2);
 
-        final int ROUTE_NUMBER_3 = 52;
-        final double LATITUDE_3 = 62.1111;
-        final double LONGITUDE_3 = 122.1111;
-        final int SPEED_3 = 52;
-        var trolleybus = new Trolleybus(
-                ROUTE_NUMBER_3,
-                LATITUDE_3,
-                LONGITUDE_3,
-                SPEED_3,
+        Trolleybus trolleybus = new Trolleybus(52, 62.1111, 122.1111, 52,
                 LocalDateTime.of(2023, 5, 13, 16, 0, 0)
         );
         transportRepository.create(trolleybus);
 
         LocalDateTime searchTime = LocalDateTime.of(2023, 5, 13, 15, 45, 00);
+        Assertions.assertEquals(transportService.findByTime(searchTime), List.of(bus1));
 
-        Assertions.assertTrue(transportService.findByTime(searchTime));
+        LocalDateTime searchInvalidTime = LocalDateTime.of(3030, 10, 10, 10, 10, 10);
+        Assertions.assertEquals(transportService.findByTime(searchInvalidTime), Collections.emptyList());
     }
 
     /**
@@ -146,37 +181,35 @@ public class TransportServiceTest {
      */
     @Test
     public void findByRouteTest() {
-        final int ROUTE_NUMBER_1 = 50;
-        final double LATITUDE_1 = 160.1111;
-        final double LONGITUDE_1 = 120.1111;
-        final int SPEED_1 = 50;
-        var bus = new Bus(
-                ROUTE_NUMBER_1,
-                LATITUDE_1,
-                LONGITUDE_1,
-                SPEED_1,
+        Bus bus = new Bus(50, 160.1111, 120.1111, 50,
                 LocalDateTime.of(2023, 5, 13, 15, 45, 00)
         );
         transportRepository.create(bus);
 
-        final int ROUTE_NUMBER_2 = 51;
-        final double LATITUDE_2 = 61.1111;
-        final double LONGITUDE_2 = 121.1111;
-        final int SPEED_2 = 51;
-        var trolleybus = new Trolleybus(
-                ROUTE_NUMBER_2,
-                LATITUDE_2,
-                LONGITUDE_2,
-                SPEED_2,
+        Trolleybus trolleybus = new Trolleybus(51, 61.1111, 121.1111, 51,
                 LocalDateTime.of(2023, 5, 13, 16, 45, 00)
         );
         transportRepository.create(trolleybus);
 
-        Assertions.assertTrue(transportService.findByRoute(ROUTE_NUMBER_1));
+        Assertions.assertEquals(transportService.findByRoute(50), List.of(bus));
 
-        Assertions.assertTrue(transportService.findByRoute(ROUTE_NUMBER_2));
+        Assertions.assertEquals(transportService.findByRoute(123456789), Collections.emptyList());
+    }
 
-        Assertions.assertFalse(transportService.findByRoute(999));
+    /**
+     * Тест {@link TransportService#clearTable()}.
+     * Также очищает таблицу перед каждым тестом, чтобы не возникали конфликты между тестовыми данными.
+     */
+    @BeforeEach
+    @Test
+    public void clearTableTest() {
+        List<Transport> allTransport = transportService.findAllTransport();
+        List<Transport> deletedTransport = transportService.clearTable();
+        Assertions.assertNotNull(deletedTransport);
+        Assertions.assertEquals(deletedTransport, allTransport);
+        Assertions.assertDoesNotThrow(() -> {
+            transportService.clearTable();
+        });
     }
 
 }

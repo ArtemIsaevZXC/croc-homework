@@ -20,30 +20,21 @@ public interface TransportRepository {
 
     /**
      * Метод создания новой записи об общественном транспорте.
+     *
      * @param transport общественный транспорт
      */
-    void create(Transport transport);
+    Transport create(Transport transport);
 
     /**
-     * Метод получения всех записей из таблицы.
+     * Метод получения всех записей транспорта выбранного типа из таблицы.
+     *
      * @return список всех записей в таблице.
      */
-    List<Transport> findAll();
-
-    /**
-     * Метод получения всех автобусов из таблицы.
-     * @return список всех автобусов из таблицы.
-     */
-    List<Bus> findAllBuses();
-
-    /**
-     * Метод получения всех троллейбусов из таблицы.
-     * @return список всех троллейбусов из таблицы.
-     */
-    List<Trolleybus> findAllTrolleys();
+    List<Transport> findAll(String type);
 
     /**
      * Возвращает список общественного транспорта по указанному маршруту.
+     *
      * @param routeToFindWith указанный маршрут.
      * @return список общественного транспорта.
      */
@@ -51,8 +42,16 @@ public interface TransportRepository {
 
     /**
      * Возвращает список общественного транспорта по указанному времени.
+     *
      * @param timeToFindWith указанное время.
      * @return список общественного транспорта.
      */
     List<Transport> findByTime(LocalDateTime timeToFindWith);
+
+    /**
+     * Метод удаления всех записей из таблицы.
+     *
+     * @return список удаленного транспорта.
+     */
+    List<Transport> clearTable();
 }

@@ -19,21 +19,27 @@ public class LocalDateTimeAdapter extends XmlAdapter<String, LocalDateTime> {
      *
      * @param s строковое представление даты и времени в формате yyyy-MM-dd'T'HH:mm:ss.
      * @return дата и время.
-     * @throws Exception если произошла ошибка преобразования.
      */
     @Override
-    public LocalDateTime unmarshal(String s) throws Exception {
-        return LocalDateTime.parse(s, formatter);
+    public LocalDateTime unmarshal(String s) {
+        try {
+            return LocalDateTime.parse(s, formatter);
+        } catch ( Exception e ) {
+            throw new RuntimeException(e);
+        }
     }
     /**
      * Преобразует дату и время в строку.
      *
      * @param time дата и время.
      * @return строковое представление даты и времени в формате yyyy-MM-dd'T'HH:mm:ss.
-     * @throws Exception если произошла ошибка преобразования.
      */
     @Override
-    public String marshal(LocalDateTime time) throws Exception {
-        return time.format(formatter);
+    public String marshal(LocalDateTime time) {
+        try {
+            return time.format(formatter);
+        } catch ( Exception e ) {
+            throw new RuntimeException(e);
+        }
     }
 }

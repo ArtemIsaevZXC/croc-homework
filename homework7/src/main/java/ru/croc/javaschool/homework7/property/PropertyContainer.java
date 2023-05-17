@@ -18,10 +18,8 @@ public class PropertyContainer {
     private static Map<String, String> properties = new HashMap<>();
     /**
      * Метод для загрузки настроек из файла config.properties и сохранения их в коллекцию properties.
-     *
-     * @throws IOException возникает, если произошла ошибка при загрузке файла настроек.
      */
-    public static void loadProperties() throws IOException {
+    public static void loadProperties() {
         var appProperties = new Properties();
         try {
             appProperties.load(
@@ -30,8 +28,7 @@ public class PropertyContainer {
                 properties.put((String) entry.getKey(), (String) entry.getValue());
             }
         } catch (Exception e) {
-            System.out.println("Возникла ошибка при загрузке настроек");
-            throw e;
+            throw new RuntimeException(e);
         }
     }
     /**

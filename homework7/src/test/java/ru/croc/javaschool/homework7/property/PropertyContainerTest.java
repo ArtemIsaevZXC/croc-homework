@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 /**
  * Тест {@link PropertyContainer}.
  *
@@ -15,11 +13,9 @@ public class PropertyContainerTest {
 
     /**
      * Метод, который загружает настройки из файла.
-     *
-     * @throws IOException если произошла ошибка при загрузке файла настроек.
      */
     @BeforeAll
-    static void loadProperties() throws IOException {
+    static void loadProperties() {
         PropertyContainer.loadProperties();
     }
 
@@ -32,6 +28,7 @@ public class PropertyContainerTest {
         Assertions.assertEquals("transport_db", PropertyContainer.getProperty("database.name"));
         Assertions.assertEquals("admin", PropertyContainer.getProperty("database.username"));
         Assertions.assertEquals("secret", PropertyContainer.getProperty("database.password"));
+        Assertions.assertEquals("", PropertyContainer.getProperty("ABC"));
     }
 
 }

@@ -1,18 +1,17 @@
 package ru.croc.javaschool.homework7.service;
 
-import ru.croc.javaschool.homework7.model.Bus;
 import ru.croc.javaschool.homework7.model.Transport;
-import ru.croc.javaschool.homework7.model.Trolleybus;
 import ru.croc.javaschool.homework7.model.unmarshalling.Buses;
 import ru.croc.javaschool.homework7.model.unmarshalling.Trolleybuses;
 import ru.croc.javaschool.homework7.repository.TransportRepository;
 import ru.croc.javaschool.homework7.xmltools.XmlConverter;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Сервисный класс для работы с транспортом.
@@ -39,77 +38,78 @@ public class TransportService {
      *
      * @param busXML        путь к XML-файлу с автобусами.
      * @param trolleybusXML путь к XML-файлу с троллейбусами.
-     * @throws IOException если возникла ошибка чтения файлов.
+     * @return список транспорта, объединяющий данные из обоих файлов.
      */
-    public void addTransportToDB(Path busXML, Path trolleybusXML) throws IOException {
-        XmlConverter xmlConverter = new XmlConverter();
-        Buses buses = xmlConverter.fromXml(Files.readString(busXML), Buses.class);
-        Trolleybuses trolleybuses = xmlConverter.fromXml(Files.readString(trolleybusXML), Trolleybuses.class);
-        List<Bus> busList = buses.getBuses();
-        List<Trolleybus> trolleybusList = trolleybuses.getTrolleybuses();
-        busList.forEach(transportRepository::create);
-        trolleybusList.forEach(transportRepository::create);
+    public List<Transport> addTransportToDB(Path busXML, Path trolleybusXML) {
+        try {
+            XmlConverter xmlConverter = new XmlConverter();
+            Buses buses = xmlConverter.fromXml(Files.readString(busXML), Buses.class);
+            Trolleybuses trolleybuses = xmlConverter.fromXml(Files.readString(trolleybusXML), Trolleybuses.class);
+            List<Transport> allTransport = Stream.concat(
+                            buses.getBuses().stream(),
+                            trolleybuses.getTrolleybuses().stream())
+                    .collect(Collectors.toList());
+            allTransport.forEach(transportRepository::create);
+            return allTransport;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * Поиск всех типов транспорта в базе данных.
+     *
+     * @return список найденного транспорта
+     */
+    public List<Transport> findAllTransport() {
+        return transportRepository.findAll("TRANSPORT");
     }
 
     /**
-     * Поиск транспорта в базе данных по типу.
+     * Поиск всех автобусов в базе данных.
      *
-     * @param type тип транспорта (TRANSPORT, BUS, TROLLEYBUS).
-     * @return true, если транспорт найден; false, если не найден или указан неверный тип.
+     * @return список найденных автобусов
      */
-    public boolean findAll(String type) {
-        switch (type) {
-            case "TRANSPORT": {
-                List<Transport> transportList = transportRepository.findAll();
-                transportList.forEach(transport -> System.out.println(transport.toString()));
-                return true;
-            }
-            case "BUS": {
-                List<Bus> busList = transportRepository.findAllBuses();
-                busList.forEach(bus -> System.out.println(bus.toString()));
-                return true;
-            }
-            case "TROLLEYBUS": {
-                List<Trolleybus> trolleybusList = transportRepository.findAllTrolleys();
-                trolleybusList.forEach(trolleybus -> System.out.println(trolleybus.toString()));
-                return true;
-            }
-            default: {
-                System.out.println("Укажите верно тип транспорта (TRANSPORT, BUS, TROLLEYBUS)");
-                return false;
-            }
-        }
+    public List<Transport> findAllBuses() {
+        return transportRepository.findAll("BUS");
+    }
+
+    /**
+     * Поиск всех троллейбусов в базе данных.
+     *
+     * @return список найденных троллейбусов
+     */
+    public List<Transport> findAllTrolleys() {
+        return transportRepository.findAll("TROLLEYBUS");
     }
 
     /**
      * Поиск транспорта в базе данных по времени.
      *
      * @param time время для поиска транспорта.
-     * @return true, если транспорт найден; false, если не найден.
+     * @return список найденного транспорта
      */
-    public boolean findByTime(LocalDateTime time) {
-        List<Transport> transportList = transportRepository.findByTime(time);
-        if (transportList.isEmpty()) {
-            System.out.println("Транспорт на указанное время не найден");
-            return false;
-        }
-        transportList.forEach(transport -> System.out.println(transport.toString()));
-        return true;
+    public List<Transport> findByTime(LocalDateTime time) {
+        return transportRepository.findByTime(time);
     }
 
     /**
      * Поиск транспорта в базе данных по маршруту.
      *
      * @param route маршрут для поиска транспорта.
-     * @return true, если транспорт найден
+     * @return список найденного транспорта
      */
-    public boolean findByRoute(int route) {
-        List<Transport> transportList = transportRepository.findByRoute(route);
-        if (transportList.isEmpty()) {
-            System.out.println("Транспорт по указанному маршруту не найден");
-            return false;
-        }
-        transportList.forEach(transport -> System.out.println(transport.toString()));
-        return true;
+    public List<Transport> findByRoute(int route) {
+        return transportRepository.findByRoute(route);
+    }
+
+    /**
+     * Метод удаления всех записей из таблицы.
+     *
+     * @return список удаленного транспорта.
+     */
+    public List<Transport> clearTable() {
+        return transportRepository.clearTable();
     }
 }

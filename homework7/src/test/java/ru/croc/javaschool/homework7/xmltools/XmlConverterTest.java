@@ -43,5 +43,10 @@ public class XmlConverterTest {
                         ))));
         Buses actual = xmlConverter.fromXml(Files.readString(path), Buses.class);
         Assertions.assertEquals(expected, actual);
+
+        Path invalidPath = Paths.get("src/test/resources", "invalidXmlTest.xml");
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            xmlConverter.fromXml(Files.readString(invalidPath), Buses.class);
+        });
     }
 }

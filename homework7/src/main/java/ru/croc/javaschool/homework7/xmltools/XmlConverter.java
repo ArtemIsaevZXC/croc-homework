@@ -24,8 +24,12 @@ public class XmlConverter {
      * @param <T>  ожидаемый тип объекта
      * @return объект
      */
-    public <T> T fromXml(String xml, Class<T> type) throws IOException {
-        return getMapper().readValue(xml, type);
+    public <T> T fromXml(String xml, Class<T> type) {
+        try {
+            return getMapper().readValue(xml, type);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

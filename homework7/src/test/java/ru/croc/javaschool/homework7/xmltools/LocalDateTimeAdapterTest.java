@@ -22,22 +22,26 @@ public class LocalDateTimeAdapterTest {
 
     /**
      * Тест {@link LocalDateTimeAdapter#marshal(LocalDateTime)}.
-     * @throws Exception если произошла ошибка преобразования.
      */
     @Test
-    public void marshalTest() throws Exception {
+    public void marshalTest() {
         String expected = "2023-05-13T15:30:00";
         String actual = adapter.marshal(time);
         Assertions.assertEquals(expected, actual);
+
+        Assertions.assertThrows(RuntimeException.class, () -> adapter.marshal(null));
     }
 
     /**
      * Тест {@link LocalDateTimeAdapter#unmarshal(String)}.
-     * @throws Exception если произошла ошибка преобразования.
      */
     @Test
-    public void unmarshalTest() throws Exception {
+    public void unmarshalTest() {
         LocalDateTime actual = adapter.unmarshal("2023-05-13T15:30:00");
         Assertions.assertEquals(time, actual);
+
+        String invalidInput = "2023-05-13 15:30:00";
+        Assertions.assertThrows(RuntimeException.class, () -> adapter.unmarshal(invalidInput));
+        Assertions.assertThrows(RuntimeException.class, () -> adapter.unmarshal(null));
     }
 }

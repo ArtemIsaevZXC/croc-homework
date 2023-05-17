@@ -27,8 +27,8 @@ public class DerbyDataSourceProvider implements DataSourceProvider {
         if (Objects.isNull(dataSource)) {
             dataSource = new EmbeddedDataSource();
             dataSource.setDatabaseName(PropertyContainer.getProperty("database.name"));
-            var username = PropertyContainer.getProperty("database.username");
-            var password = PropertyContainer.getProperty("database.password");
+            String username = PropertyContainer.getProperty("database.username");
+            String password = PropertyContainer.getProperty("database.password");
             if (!username.isEmpty() && !password.isEmpty()) {
                 dataSource.setUser(username);
                 dataSource.setPassword(password);
